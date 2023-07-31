@@ -2,7 +2,7 @@
   <MainLayout>
     <div id="ShoppingCartPage" class="mt-4 max-w-[1200px] mx-auto px-2">
       <div
-        v-if="!useUserStore.cart.length"
+        v-if="!userStore.cart.length"
         class="h-[500px] flex items-center justify-center"
       >
         <div class="pt-20">
@@ -89,7 +89,6 @@
 <script setup>
 import MainLayout from "~/layouts/MainLayout.vue";
 import { useUserStore } from "~/stores/user";
-
 const userStore = useUserStore();
 const user = useSupabaseUser();
 
