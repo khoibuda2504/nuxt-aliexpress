@@ -4,7 +4,7 @@
       class="w-full flex items-center justify-center p-5 border-b border-b-gray-300"
     >
       <NuxtLink to="/" class="min-w-[170px]">
-        <img width="170" src="/aliexpress-logo.png" />
+        <img width="170" src="/logo.png" />
       </NuxtLink>
     </div>
     <div class="max-w-[400px] mx-auto px-2">
@@ -35,9 +35,9 @@ const user = useSupabaseUser();
 
 watchEffect(() => {
   if (user.value) {
-      return navigateTo('/')
+    return navigateTo("/");
   }
-})
+});
 
 const login = async (prov) => {
   const { data, error } = await client.auth.signInWithOAuth({
