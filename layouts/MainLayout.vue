@@ -84,7 +84,7 @@
         class="flex lg:justify-start justify-between gap-10 max-w-[1150px] w-full px-3 py-5 mx-auto"
       >
         <NuxtLink to="/" class="min-w-[170px]">
-          <img width="170" src="/Aliexpress-logo.png" />
+          <img width="170" src="/aliexpress-logo.png" />
         </NuxtLink>
         <div class="max-w-[700px] w-full md:block hidden">
           <div class="relative">
