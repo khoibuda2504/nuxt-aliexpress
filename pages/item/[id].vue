@@ -25,10 +25,10 @@
           </div>
         </div>
         <div class="md:w-[60%] bg-white p-3 rounded-lg">
-          <div v-if="product && product.data">
-            <p class="mb-2">{{ product.data.title }}</p>
+          <div v-if="serverProduct">
+            <p class="mb-2">{{ serverProduct.title }}</p>
             <p class="font-light text-[12px] mb-2">
-              {{ product.data.description }}
+              {{ serverProduct.description }}
             </p>
           </div>
 
@@ -95,16 +95,27 @@ const route = useRoute();
 
 let product = ref(null);
 let currentImage = ref(null);
-onBeforeMount(async () => {
-  product.value = await useFetch(
-    `/api/prisma/get-product-by-id/${route.params.id}`
-  );
-});
+
+const images = ref([
+  "",
+  "https://picsum.photos/id/212/800/800",
+  "https://picsum.photos/id/233/800/800",
+  "https://picsum.photos/id/165/800/800",
+  "https://picsum.photos/id/99/800/800",
+  "https://picsum.photos/id/144/800/800",
+]);
+const { data: serverProduct } = await useFetch(
+  `/api/prisma/get-product-by-id/${route.params.id}`
+);
+
+if (serverProduct) {
+  product.value = serverProduct.value;
+}
 watchEffect(() => {
-  if (product.value && product.value.data) {
-    currentImage.value = product.value.data.url;
-    images.value[0] = product.value.data.url;
-    userStore.isLoading = false;
+  if (product && product.value) {
+    currentImage.value = product.value.url;
+    images.value[0] = product.value.url;
+    setTimeout(() => (userStore.isLoading = false), 200);
   }
 });
 
@@ -119,22 +130,13 @@ const isInCart = computed(() => {
 });
 
 const priceComputed = computed(() => {
-  if (product.value && product.value.data) {
-    return product.value.data.price / 100;
+  if (serverProduct) {
+    return serverProduct.value.price / 100;
   }
   return "0.00";
 });
 
-const images = ref([
-  "",
-  "https://picsum.photos/id/212/800/800",
-  "https://picsum.photos/id/233/800/800",
-  "https://picsum.photos/id/165/800/800",
-  "https://picsum.photos/id/99/800/800",
-  "https://picsum.photos/id/144/800/800",
-]);
-
 const addToCart = () => {
-  userStore.cart.push(product.value.data);
+  userStore.cart.push(serverProduct.value);
 };
 </script>

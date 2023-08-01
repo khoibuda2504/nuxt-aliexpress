@@ -127,7 +127,7 @@ const userStore = useUserStore();
 const user = useSupabaseUser();
 const route = useRoute();
 
-definePageMeta({ middleware: "auth" });
+definePageMeta({ middleware: process.client ? "auth" : undefined });
 
 let stripe = null;
 let elements = null;
@@ -178,14 +178,13 @@ watch(
 const stripeInit = async () => {
   const runtimeConfig = useRuntimeConfig();
   stripe = Stripe(runtimeConfig.public.stripePk);
-
+console.log('stripe:::::', stripe)
   let res = await $fetch("/api/stripe/paymentintent", {
     method: "POST",
     body: {
       amount: total.value,
     },
   });
-  console.log("res:::::", res);
   clientSecret = res.client_secret;
 
   elements = stripe.elements();

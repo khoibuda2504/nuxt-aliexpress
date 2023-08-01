@@ -29,17 +29,11 @@
             </div>
           </div>
 
-          <div class="bg-[#FEEEEF] rounded-lg p-4 mt-4">
-            <div class="text-red-500 font-bold">
-              Welcome Deal applicable on 1 item only
-            </div>
-          </div>
 
           <div id="Items" class="bg-white rounded-lg p-4 mt-4">
             <div v-for="product in userStore.cart">
               <CartItem
                 :product="product"
-                :selectedArray="selectedArray"
                 @selectedRadio="selectedRadioFunc"
               />
             </div>
@@ -57,11 +51,13 @@
               </div>
             </div>
             <button
+              :disabled="selectedArray.length === 0"
               @click="goToCheckout"
               class="flex items-center justify-center bg-[#FD374F] w-full text-white text-[21px] font-semibold p-1.5 rounded-full mt-4"
             >
               Checkout
             </button>
+            <div v-if="selectedArray.length === 0" class="mt-3 text-center text-red-500">We have to choose at least 1 item</div>
           </div>
 
           <div id="PaymentProtection" class="bg-white rounded-lg p-4 mt-4">
@@ -100,22 +96,26 @@ onMounted(() => {
 
 const cards = ref(["visa.png", "mastercard.png", "paypal.png", "applepay.png"]);
 
+const cartSelected = computed(() => {
+  const selectedIds = selectedArray.value.map((item) => item.id);
+  return userStore.cart.filter((item) => selectedIds.includes(item.id));
+});
 const totalPriceComputed = computed(() => {
   let price = 0;
-  userStore.cart.forEach((prod) => {
+  cartSelected.value.forEach((prod) => {
     price += prod.price;
   });
   return price / 100;
 });
 
 const selectedRadioFunc = (e) => {
-  if (!selectedArray.value.length) {
+  if (selectedArray.value.length === 0) {
     selectedArray.value.push(e);
     return;
   }
 
   selectedArray.value.forEach((item, index) => {
-    if (e.id != item.id) {
+    if (e.id !== item.id) {
       selectedArray.value.push(e);
     } else {
       selectedArray.value.splice(index, 1);
@@ -124,17 +124,8 @@ const selectedRadioFunc = (e) => {
 };
 
 const goToCheckout = () => {
-  let ids = [];
   userStore.checkout = [];
-
-  selectedArray.value.forEach((item) => ids.push(item.id));
-
-  let res = userStore.cart.filter((item) => {
-    return ids.indexOf(item.id) != -1;
-  });
-
-  res.forEach((item) => userStore.checkout.push(toRaw(item)));
-
+  userStore.checkout = cartSelected.value;
   return navigateTo("/checkout");
 };
 </script>
